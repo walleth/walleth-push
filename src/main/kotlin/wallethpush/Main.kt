@@ -1,7 +1,8 @@
 package wallethpush
 
-import okhttp3.*
-import java.io.IOException
+import okhttp3.MediaType
+import okhttp3.Request
+import okhttp3.RequestBody
 
 val JSONMediaType = MediaType.parse("application/json")!!
 
@@ -19,39 +20,28 @@ fun main(args: Array<String>) {
     var lastBlock = "0x0"
 
     while (true) {
-        okhttp.newCall(buildBlockRequest()).enqueue(object : Callback {
-            override fun onResponse(call: Call?, response: Response) {
-                val newBlock = response.body().use { blockNumberAdapter.fromJson(it.source()) }.result
-                if (newBlock != lastBlock) {
-                    lastBlock = newBlock
-                    println("New Block" + newBlock)
-                    processBlockNumber(newBlock)
-                }
+        try {
+            Thread.sleep(1000)
+
+            val newBlock = okhttp.newCall(buildBlockRequest()).execute().body().use { blockNumberAdapter.fromJson(it.source()) }.result
+
+            if (newBlock != lastBlock) {
+                lastBlock = newBlock
+                println("New Block" + newBlock)
+                processBlockNumber(newBlock)
             }
 
-            override fun onFailure(call: Call?, e: IOException) {
-                println("problem getting block number " + e.message)
-            }
-
-        })
-
-        Thread.sleep(1000)
+        } catch (e: Exception) {
+            println("problem at block $lastBlock " + e.message)
+        }
     }
 
 }
 
 fun processBlockNumber(newBlock: String) {
-    okhttp.newCall(buildBlockByNumberRequest(newBlock)).enqueue(object : Callback {
-        override fun onFailure(call: Call?, e: IOException) {
-            println("problem getting block information " + e.message)
-        }
-
-        override fun onResponse(call: Call?, response: Response) {
-            response.body().use { blockInfoAdapter.fromJson(it.source()) }.result.transactions.forEach {
-                println(it.from + " > " + it.to)
-            }
-        }
-
-    })
+    val response = okhttp.newCall(buildBlockByNumberRequest(newBlock)).execute().body()
+    response.use { blockInfoAdapter.fromJson(it.source()) }.result.transactions.forEach {
+        println(it.from + " > " + it.to)
+    }
 }
 
