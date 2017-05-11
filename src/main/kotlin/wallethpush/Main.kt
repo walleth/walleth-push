@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     while (true) {
         okhttp.newCall(buildBlockRequest()).enqueue(object : Callback {
             override fun onResponse(call: Call?, response: Response) {
-                val newBlock = blockNumberAdapter.fromJson(response.body().source()).result
+                val newBlock = response.body().use { blockNumberAdapter.fromJson(it.source()) }.result
                 if (newBlock != lastBlock) {
                     lastBlock = newBlock
                     println("New Block" + newBlock)
@@ -47,8 +47,7 @@ fun processBlockNumber(newBlock: String) {
         }
 
         override fun onResponse(call: Call?, response: Response) {
-            val gasLimit = blockInfoAdapter.fromJson(response.body().source()).result.transactions
-            gasLimit.forEach {
+            response.body().use { blockInfoAdapter.fromJson(it.source()) }.result.transactions.forEach {
                 println(it.from + " > " + it.to)
             }
         }
