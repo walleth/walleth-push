@@ -1,0 +1,39 @@
+buildscript {
+    ext {
+        KOTLIN_VERSION = "1.1.2-3"
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${KOTLIN_VERSION}"
+    }
+}
+
+apply plugin: "kotlin"
+apply plugin: 'application'
+
+mainClassName = "wallethpush.MainKt"
+
+repositories {
+    jcenter()
+    maven { url 'http://dl.bintray.com/kotlin/ktor' }
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:${KOTLIN_VERSION}"
+
+    compile 'com.nimbusds:nimbus-jose-jwt:4.23'
+    compile 'com.squareup.moshi:moshi:1.4.0'
+    compile 'com.squareup.okhttp3:okhttp:3.1.2'
+
+    compile 'org.jetbrains.ktor:ktor-core:0.3.0'
+    compile 'org.jetbrains.ktor:ktor-netty:0.3.0'
+
+    compile 'org.mortbay.jetty.alpn:alpn-boot:8.1.11.v20170118'
+    
+    testCompile 'org.assertj:assertj-core:3.6.2'
+}
