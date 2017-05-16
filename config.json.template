@@ -1,0 +1,4 @@
+{
+    "port":9001,
+    "fcm_api_key":"your FCM API Key"
+}
