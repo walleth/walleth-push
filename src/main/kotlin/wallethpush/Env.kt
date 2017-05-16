@@ -7,6 +7,8 @@ import wallethpush.model.Config
 import wallethpush.model.PushMapping
 import wallethpush.model.eth_jsonrpc.BlockInformationResponse
 import wallethpush.model.eth_jsonrpc.BlockNumberResponse
+import wallethpush.logic.push_mapping.FileBasedPushMappingStore
+import wallethpush.logic.push_mapping.PushMappingStore
 import java.io.File
 
 val configFile = File("config.json")

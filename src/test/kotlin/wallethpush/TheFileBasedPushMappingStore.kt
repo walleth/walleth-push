@@ -1,8 +1,9 @@
+package  wallethpush
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import wallethpush.FileBasedPushMappingStore
 import wallethpush.model.PushMapping
+import wallethpush.logic.push_mapping.FileBasedPushMappingStore
 
 class TheFileBasedPushMappingStore {
 

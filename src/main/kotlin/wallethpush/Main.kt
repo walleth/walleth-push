@@ -1,5 +1,7 @@
 package wallethpush
 
+import wallethpush.logic.startWebServer
+
 
 fun main(args: Array<String>) {
 
