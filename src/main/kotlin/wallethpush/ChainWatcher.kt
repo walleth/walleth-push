@@ -44,12 +44,14 @@ fun processBlockNumber(newBlock: String) {
     response.use { blockInfoAdapter.fromJson(it.source()) }.result.transactions.forEach {
         println(it.from + " > " + it.to)
         val tokensForFrom = pushMappingStore.getTokensForAddress(it.from)
-        if (!tokensForFrom.isEmpty()) {
+        if (tokensForFrom.isNotEmpty()) {
             notifyTokens(tokensForFrom)
         } else {
-            val tokensForTo = pushMappingStore.getTokensForAddress(it.to)
-            if (tokensForTo.isNotEmpty()) {
-                notifyTokens(tokensForTo)
+            if (it.to != null) {
+                val tokensForTo = pushMappingStore.getTokensForAddress(it.to)
+                if (tokensForTo.isNotEmpty()) {
+                    notifyTokens(tokensForTo)
+                }
             }
         }
     }
