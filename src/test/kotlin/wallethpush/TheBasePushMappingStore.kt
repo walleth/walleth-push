@@ -2,14 +2,14 @@ package  wallethpush
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import wallethpush.logic.push_mapping.FileBasedPushMappingStore
+import wallethpush.logic.push_mapping.BasePushMappingStore
 import wallethpush.model.PushMapping
 
-class TheFileBasedPushMappingStore {
+class TheBasePushMappingStore {
 
     @Test
     fun emptyWorks() {
-        val tested = FileBasedPushMappingStore()
+        val tested = BasePushMappingStore()
 
         assertThat(tested.getTokensForAddress("0xF00")).isEmpty()
     }
@@ -17,7 +17,7 @@ class TheFileBasedPushMappingStore {
 
     @Test
     fun singleWorks() {
-        val tested = FileBasedPushMappingStore()
+        val tested = BasePushMappingStore()
 
         tested.setPushMapping(PushMapping("BAR","TOKENPROBE", listOf("0xF00")))
 
@@ -27,7 +27,7 @@ class TheFileBasedPushMappingStore {
 
     @Test
     fun multipleWorks() {
-        val tested = FileBasedPushMappingStore()
+        val tested = BasePushMappingStore()
 
         tested.setPushMapping(PushMapping("BAR","TOKENPROBE", listOf("0xF00")))
         tested.setPushMapping(PushMapping("BAR2","TOKENPROBE2", listOf("0xF00")))
@@ -37,7 +37,7 @@ class TheFileBasedPushMappingStore {
 
     @Test
     fun removingWorks() {
-        val tested = FileBasedPushMappingStore()
+        val tested = BasePushMappingStore()
 
         tested.setPushMapping(PushMapping("BAR","TOKENPROBE", listOf("0xF00")))
         tested.setPushMapping(PushMapping("BAR2","TOKENPROBE2", listOf("0xF00")))

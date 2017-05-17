@@ -8,7 +8,7 @@ import org.jetbrains.ktor.response.respondText
 import org.jetbrains.ktor.routing.get
 import org.jetbrains.ktor.routing.post
 import org.jetbrains.ktor.routing.routing
-import wallethpush.pushConfigRequestPayloadAdapter
+import wallethpush.pushMappingAdapter
 import wallethpush.pushMappingStore
 
 
@@ -20,7 +20,7 @@ fun startWebServer() {
             post("/") {
                 val requestContent = call.request.content[String::class]
 
-                val pushMapping = pushConfigRequestPayloadAdapter.fromJson(requestContent)
+                val pushMapping = pushMappingAdapter.fromJson(requestContent)
 
                 if (pushMapping != null && pushMapping.uid.isNotBlank() && pushMapping.pushToken.isNotBlank()) {
                     println("registered mapping: " + pushMapping)
