@@ -67,7 +67,7 @@ fun notifyTokens(tokens: List<String>) {
         val request = Request.Builder()
                 .url("https://fcm.googleapis.com/fcm/send")
                 .header("Authorization", "key=" + ConfigProvider.config.fcm_api_key)
-                .post(RequestBody.create(MediaType.parse("application/json"), "{\"to\":\"$it\"}"))
+                .post(RequestBody.create(JSONMediaType, "{\"to\":\"$it\"}"))
                 .build()
         val resultString = okhttp.newCall(request).execute().body().use { it.string() }
         println("send notification " + resultString)
