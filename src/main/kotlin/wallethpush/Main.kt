@@ -1,6 +1,7 @@
 package wallethpush
 
 import wallethpush.logic.startWebServer
+import wallethpush.logic.watchChain
 
 
 fun main(args: Array<String>) {

@@ -1,9 +1,13 @@
-package wallethpush
+package wallethpush.logic
 
 import kontinuum.ConfigProvider
 import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.RequestBody
+import wallethpush.blockInfoAdapter
+import wallethpush.blockNumberAdapter
+import wallethpush.okhttp
+import wallethpush.pushMappingStore
 
 val JSONMediaType: MediaType = MediaType.parse("application/json")
 
@@ -12,7 +16,7 @@ fun buildBlockRequest() = buildRequest(RequestBody.create(JSONMediaType, "{\"jso
 fun buildBlockByNumberRequest(number: String)
         = buildRequest(RequestBody.create(JSONMediaType, "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"$number\", true],\"id\":1}}"))
 
-fun buildRequest(body: RequestBody) = Request.Builder().url("http://192.168.5.42:9003")
+fun buildRequest(body: RequestBody) = Request.Builder().url(ConfigProvider.config.eth_rpc_url)
         .method("POST", body)
         .build()!!
 

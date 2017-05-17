@@ -1,4 +1,5 @@
 {
     "port":9001,
-    "fcm_api_key":"your FCM API Key"
+    "fcm_api_key":"your FCM API Key",
+    "eth_rpc_url":"http://127.0.0.1:9003"
 }
