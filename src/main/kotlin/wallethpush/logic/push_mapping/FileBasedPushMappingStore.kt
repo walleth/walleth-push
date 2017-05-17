@@ -4,17 +4,27 @@ import wallethpush.model.PushMapping
 
 class FileBasedPushMappingStore : PushMappingStore {
 
-    val map = mutableMapOf<String, MutableList<String>>()
+    var addressToUIDMap = mutableMapOf<String, MutableList<String>>()
+    val uidToTokenMap = mutableMapOf<String, String>()
 
-    override fun getTokensForAddress(address: String)
-            = map[address] ?: mutableListOf()
+    override fun getTokensForAddress(address: String) = if (addressToUIDMap.containsKey(address)) {
+        addressToUIDMap[address]!!.map { uidToTokenMap[it]!! }
+    } else {
+        emptyList<String>()
+    }
 
     override fun setPushMapping(pushMapping: PushMapping) {
+        uidToTokenMap[pushMapping.uid] = pushMapping.pushToken
+
+        addressToUIDMap = addressToUIDMap.map {
+            it.key to it.value.filter { uid -> uid != pushMapping.uid }.toMutableList()
+        }.toMap().toMutableMap()
+
         pushMapping.addresses.forEach {
-            if (map[it] != null) {
-                map[it]!!.add(pushMapping.pushToken)
+            if (addressToUIDMap[it] != null) {
+                addressToUIDMap[it]!!.add(pushMapping.uid)
             } else {
-                map[it] = mutableListOf(pushMapping.pushToken)
+                addressToUIDMap[it] = mutableListOf(pushMapping.uid)
             }
         }
     }
