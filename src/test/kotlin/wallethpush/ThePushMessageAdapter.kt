@@ -24,7 +24,7 @@ class ThePushMessageAdapter {
 
         val tested = pushMessageAdapter.fromJson(probe)
 
-        assertThat(tested.data.address).isEqualTo("0xFOO")
+        assertThat(tested!!.data.address).isEqualTo("0xFOO")
         assertThat(tested.to).isEqualTo("TOFOO")
     }
 

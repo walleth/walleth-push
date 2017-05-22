@@ -27,9 +27,9 @@ fun watchChain() {
         try {
             Thread.sleep(1000)
 
-            val newBlock = okhttp.newCall(buildBlockRequest()).execute().body().use { blockNumberAdapter.fromJson(it.source()) }.result
+            val newBlock = okhttp.newCall(buildBlockRequest()).execute().body().use { blockNumberAdapter.fromJson(it.source()) }?.result
 
-            if (newBlock != lastBlock) {
+            if (newBlock != null && newBlock != lastBlock) {
                 lastBlock = newBlock
                 println("New Block" + newBlock)
                 processBlockNumber(newBlock)
@@ -44,7 +44,7 @@ fun watchChain() {
 
 fun processBlockNumber(newBlock: String) {
     val response = okhttp.newCall(buildBlockByNumberRequest(newBlock)).execute().body()
-    response.use { blockInfoAdapter.fromJson(it.source()) }.result.transactions.forEach {
+    response.use { blockInfoAdapter.fromJson(it.source()) }!!.result.transactions.forEach {
         println(it.from + " > " + it.to)
         val tokensForFrom = pushMappingStore.getTokensForAddress(it.from)
         if (tokensForFrom.isNotEmpty()) {

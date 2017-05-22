@@ -15,7 +15,7 @@ class FileBasedPushMappingStore : BasePushMappingStore() {
             db_dir.mkdir()
         } else {
             db_dir.listFiles().forEach {
-                val pushMapping = pushMappingAdapter.fromJson(Okio.buffer(Okio.source(it)))
+                val pushMapping = pushMappingAdapter.fromJson(Okio.buffer(Okio.source(it)))!!
                 println("importing $pushMapping")
                 setPushMappingInternal(pushMapping)
             }
