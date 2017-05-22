@@ -7,6 +7,7 @@ import wallethpush.logic.push_mapping.FileBasedPushMappingStore
 import wallethpush.logic.push_mapping.PushMappingStore
 import wallethpush.model.Config
 import wallethpush.model.PushMapping
+import wallethpush.model.PushMessage
 import wallethpush.model.eth_jsonrpc.BlockInformationResponse
 import wallethpush.model.eth_jsonrpc.BlockNumberResponse
 import java.io.File
@@ -20,6 +21,7 @@ val blockNumberAdapter: JsonAdapter<BlockNumberResponse> = moshi.adapter(BlockNu
 val blockInfoAdapter: JsonAdapter<BlockInformationResponse> = moshi.adapter(BlockInformationResponse::class.java)
 
 val pushMappingAdapter: JsonAdapter<PushMapping> = moshi.adapter(PushMapping::class.java)
+val pushMessageAdapter: JsonAdapter<PushMessage> = moshi.adapter(PushMessage::class.java)
 val configAdapter: JsonAdapter<Config> = moshi.adapter(Config::class.java)
 
 val pushMappingStore: PushMappingStore = FileBasedPushMappingStore()
