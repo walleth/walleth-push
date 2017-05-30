@@ -1,23 +1,17 @@
 package wallethpush.logic
 
 import kontinuum.ConfigProvider
-import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.RequestBody
-import wallethpush.*
+import org.kethereum.rpc.EthereumRPC
+import org.kethereum.rpc.JSONMediaType
 import wallethpush.model.PushMessage
 import wallethpush.model.PushMessageData
+import wallethpush.okhttp
+import wallethpush.pushMappingStore
+import wallethpush.pushMessageAdapter
 
-val JSONMediaType: MediaType = MediaType.parse("application/json")
-
-fun buildBlockRequest() = buildRequest(RequestBody.create(JSONMediaType, "{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1}"))
-
-fun buildBlockByNumberRequest(number: String)
-        = buildRequest(RequestBody.create(JSONMediaType, "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"$number\", true],\"id\":1}}"))
-
-fun buildRequest(body: RequestBody) = Request.Builder().url(ConfigProvider.config.eth_rpc_url)
-        .method("POST", body)
-        .build()!!
+val ethereumRPC = EthereumRPC(ConfigProvider.config.eth_rpc_url, okhttp = okhttp)
 
 fun watchChain() {
 
@@ -27,7 +21,7 @@ fun watchChain() {
         try {
             Thread.sleep(1000)
 
-            val newBlock = okhttp.newCall(buildBlockRequest()).execute().body().use { blockNumberAdapter.fromJson(it.source()) }?.result
+            val newBlock = ethereumRPC.getBlockNumberString()
 
             if (newBlock != null && newBlock != lastBlock) {
                 lastBlock = newBlock
@@ -43,17 +37,16 @@ fun watchChain() {
 }
 
 fun processBlockNumber(newBlock: String) {
-    val response = okhttp.newCall(buildBlockByNumberRequest(newBlock)).execute().body()
-    response.use { blockInfoAdapter.fromJson(it.source()) }!!.result.transactions.forEach {
+    ethereumRPC.getBlockByNumber(newBlock)?.transactions?.forEach {
         println(it.from + " > " + it.to)
         val tokensForFrom = pushMappingStore.getTokensForAddress(it.from)
         if (tokensForFrom.isNotEmpty()) {
             notifyTokens(tokensForFrom, it.from)
         } else {
-            if (it.to != null) {
-                val tokensForTo = pushMappingStore.getTokensForAddress(it.to)
+            it.to?.let { address ->
+                val tokensForTo = pushMappingStore.getTokensForAddress(address)
                 if (tokensForTo.isNotEmpty()) {
-                    notifyTokens(tokensForTo, it.to)
+                    notifyTokens(tokensForTo, address)
                 }
             }
         }
@@ -69,7 +62,7 @@ private fun notifyTokens(tokens: List<String>, address: String) {
                 .header("Authorization", "key=" + ConfigProvider.config.fcm_api_key)
                 .post(RequestBody.create(JSONMediaType, json))
                 .build()
-        val resultString = okhttp.newCall(request).execute().body().use { it.string() }
+        val resultString = okhttp.newCall(request).execute().body().use { it?.string() }
         println("send notification " + resultString)
     }
 }
