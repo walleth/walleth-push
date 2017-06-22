@@ -13,6 +13,11 @@ Then run:
 ./gradlew run
 ```
 
+Links
+=====
+
+
+* https://github.com/status-im/status-go/wiki/Whisper-Push-Notifications
 
 License
 =======
