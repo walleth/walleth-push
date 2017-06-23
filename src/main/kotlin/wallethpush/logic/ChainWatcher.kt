@@ -3,8 +3,11 @@ package wallethpush.logic
 import kontinuum.ConfigProvider
 import okhttp3.Request
 import okhttp3.RequestBody
+import org.kethereum.functions.getTokenTransferTo
+import org.kethereum.functions.isTokenTransfer
 import org.kethereum.rpc.EthereumRPC
 import org.kethereum.rpc.JSONMediaType
+import org.kethereum.rpc.toKethereumTransaction
 import wallethpush.model.PushMessage
 import wallethpush.model.PushMessageData
 import wallethpush.okhttp
@@ -38,17 +41,22 @@ fun watchChain() {
 
 fun processBlockNumber(newBlock: String) {
     ethereumRPC.getBlockByNumber(newBlock)?.transactions?.forEach {
-        println(it.from + " > " + it.to)
-        val tokensForFrom = pushMappingStore.getTokensForAddress(it.from)
-        if (tokensForFrom.isNotEmpty()) {
-            notifyTokens(tokensForFrom, it.from)
+        val pushTokensToNotify = pushMappingStore.getTokensForAddress(it.from).toMutableList()
+
+        if (it.toKethereumTransaction().isTokenTransfer()) {
+            val to = it.toKethereumTransaction().getTokenTransferTo()
+            println("Token " + it.from + " > " + to + " token:" + it.to)
+            pushTokensToNotify.addAll(pushMappingStore.getTokensForAddress(to.hex))
         } else {
+            println("ETH " + it.from + " > " + it.to)
+
             it.to?.let { address ->
-                val tokensForTo = pushMappingStore.getTokensForAddress(address)
-                if (tokensForTo.isNotEmpty()) {
-                    notifyTokens(tokensForTo, address)
-                }
+                pushTokensToNotify.addAll(pushMappingStore.getTokensForAddress(address))
             }
+        }
+
+        if (pushTokensToNotify.isNotEmpty()) {
+            notifyTokens(pushTokensToNotify, it.from)
         }
     }
 }
