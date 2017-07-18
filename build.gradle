@@ -31,7 +31,7 @@ dependencies {
 
     compile 'com.nimbusds:nimbus-jose-jwt:4.23'
     compile 'com.squareup.moshi:moshi:1.5.0'
-    compile 'com.squareup.okhttp3:okhttp:3.1.2'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
 
     compile 'com.github.walleth.kethereum:rpc:0.10'
 
@@ -39,6 +39,6 @@ dependencies {
     compile 'org.jetbrains.ktor:ktor-netty:0.3.0'
 
     compile 'org.mortbay.jetty.alpn:alpn-boot:8.1.11.v20170118'
-    
+
     testCompile 'org.assertj:assertj-core:3.6.2'
 }
