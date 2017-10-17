@@ -4,5 +4,5 @@ data class Config(
         val port: Int,
 
         val fcm_api_key: String,
-        val eth_rpc_url: String
+        val chains: List<Chain>
 )
