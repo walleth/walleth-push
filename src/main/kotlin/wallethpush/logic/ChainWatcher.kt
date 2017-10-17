@@ -14,32 +14,40 @@ import wallethpush.okhttp
 import wallethpush.pushMappingStore
 import wallethpush.pushMessageAdapter
 
-val ethereumRPC = EthereumRPC(ConfigProvider.config.eth_rpc_url, okhttp = okhttp)
+class StatefulChain(val name: String, val ethereumRPC: EthereumRPC, var lastBlock: String)
+
 
 fun watchChain() {
 
-    var lastBlock = "0x0"
+
+    val statefulChains = ConfigProvider.config.chains.map {
+        StatefulChain(it.name, EthereumRPC(it.eth_rpc_url, okhttp = okhttp), "0x0")
+    }
 
     while (true) {
-        try {
-            Thread.sleep(1000)
 
-            val newBlock = ethereumRPC.getBlockNumberString()
+        Thread.sleep(1000)
 
-            if (newBlock != null && newBlock != lastBlock) {
-                lastBlock = newBlock
-                println("New Block" + newBlock)
-                processBlockNumber(newBlock)
+        for (statefulChain in statefulChains) {
+            try {
+                val newBlock = statefulChain.ethereumRPC.getBlockNumberString()
+
+                if (newBlock != null && newBlock != statefulChain.lastBlock) {
+                    statefulChain.lastBlock = newBlock
+                    println("New Block $newBlock on " + statefulChain.name)
+                    processBlockNumber(newBlock, statefulChain.ethereumRPC)
+                }
+            } catch (e: Exception) {
+                println("problem at block ${statefulChain.lastBlock} " + e.message)
             }
-
-        } catch (e: Exception) {
-            println("problem at block $lastBlock " + e.message)
         }
+
+
     }
 
 }
 
-fun processBlockNumber(newBlock: String) {
+fun processBlockNumber(newBlock: String, ethereumRPC: EthereumRPC) {
     ethereumRPC.getBlockByNumber(newBlock)?.transactions?.forEach {
         val pushTokensToNotify = pushMappingStore.getTokensForAddress(it.from).toMutableList()
 
