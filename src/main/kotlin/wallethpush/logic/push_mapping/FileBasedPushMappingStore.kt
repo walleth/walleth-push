@@ -8,13 +8,13 @@ import java.nio.charset.Charset
 
 class FileBasedPushMappingStore : BasePushMappingStore() {
 
-    val db_dir = File("db")
+    private val databaseDirectory = File("db")
 
     init {
-        if (!db_dir.exists()) {
-            db_dir.mkdir()
+        if (!databaseDirectory.exists()) {
+            databaseDirectory.mkdir()
         } else {
-            db_dir.listFiles().forEach {
+            databaseDirectory.listFiles().forEach {
                 val pushMapping = pushMappingAdapter.fromJson(Okio.buffer(Okio.source(it)))!!
                 println("importing $pushMapping")
                 setPushMappingInternal(pushMapping)
@@ -25,7 +25,7 @@ class FileBasedPushMappingStore : BasePushMappingStore() {
     override fun setPushMapping(pushMapping: PushMapping) {
         super.setPushMapping(pushMapping)
 
-        val file = File(db_dir, pushMapping.uid)
+        val file = File(databaseDirectory, pushMapping.uid)
         Okio.buffer(Okio.sink(file)).use {
             it.writeString(pushMappingAdapter.toJson(pushMapping), Charset.forName("utf-8"))
         }
