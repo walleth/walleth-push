@@ -4,13 +4,13 @@ import wallethpush.model.PushMapping
 
 open class BasePushMappingStore : PushMappingStore {
 
-    var addressToUIDMap = mutableMapOf<String, MutableList<String>>()
-    val uidToTokenMap = mutableMapOf<String, String>()
+    private var addressToUIDMap = mutableMapOf<String, MutableList<String>>()
+    private val uidToTokenMap = mutableMapOf<String, String>()
 
     override fun getTokensForAddress(address: String) = if (addressToUIDMap.containsKey(address)) {
         addressToUIDMap[address]!!.map { uidToTokenMap[it]!! }
     } else {
-        emptyList<String>()
+        emptyList()
     }
 
     override fun setPushMapping(pushMapping: PushMapping) {

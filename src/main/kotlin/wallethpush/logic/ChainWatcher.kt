@@ -13,6 +13,7 @@ import wallethpush.model.PushMessageData
 import wallethpush.okhttp
 import wallethpush.pushMappingStore
 import wallethpush.pushMessageAdapter
+import java.math.BigInteger
 
 class StatefulChain(val name: String, val ethereumRPC: EthereumRPC, var lastBlock: String)
 
@@ -34,7 +35,7 @@ fun watchChain() {
 
                 if (newBlock != null && newBlock != statefulChain.lastBlock) {
                     statefulChain.lastBlock = newBlock
-                    println("New Block $newBlock " + statefulChain.lastBlock + " on " + statefulChain.name)
+                    println("New Block " + BigInteger(newBlock.replace("0x",""), 16) + " on " + statefulChain.name)
                     processBlockNumber(newBlock, statefulChain.ethereumRPC)
                 }
             } catch (e: Exception) {
@@ -53,10 +54,8 @@ fun processBlockNumber(newBlock: String, ethereumRPC: EthereumRPC) {
 
         if (it.toKethereumTransaction().isTokenTransfer()) {
             val to = it.toKethereumTransaction().getTokenTransferTo()
-            println("Token " + it.from + " > " + to + " token:" + it.to)
             pushTokensToNotify.addAll(pushMappingStore.getTokensForAddress(to.hex))
         } else {
-            println("ETH " + it.from + " > " + it.to)
 
             it.to?.let { address ->
                 pushTokensToNotify.addAll(pushMappingStore.getTokensForAddress(address))
