@@ -34,12 +34,11 @@ fun watchChain() {
                 val newBlock = statefulChain.ethereumRPC.getBlockNumberString()
 
                 if (newBlock != null && newBlock != statefulChain.lastBlock) {
-                    statefulChain.lastBlock = newBlock
                     println("New Block " + BigInteger(newBlock.replace("0x",""), 16) + " on " + statefulChain.name)
                     processBlockNumber(newBlock, statefulChain.ethereumRPC)
+                    statefulChain.lastBlock = newBlock
                 }
             } catch (e: Exception) {
-                println("problem at block ${statefulChain.lastBlock} " + e.message)
                 e.printStackTrace()
             }
         }
