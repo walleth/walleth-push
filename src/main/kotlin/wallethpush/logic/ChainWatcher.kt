@@ -46,7 +46,8 @@ fun watchChain() {
                     }
                 }
             } catch (e: Exception) {
-                println("problem on chain ${statefulChain.name} at block ${statefulChain.lastBlockBigInteger()}} " + e.message)
+                println("problem on chain ${statefulChain.name} at block ${statefulChain.lastBlockBigInteger()} " + e.message)
+                e.printStackTrace()
             }
         }
 
