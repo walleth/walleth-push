@@ -1,6 +1,6 @@
 package wallethpush.logic
 
-import kontinuum.ConfigProvider
+import wallethpush.model.ConfigProvider
 import org.jetbrains.ktor.application.call
 import org.jetbrains.ktor.http.ContentType
 import org.jetbrains.ktor.netty.embeddedNettyServer

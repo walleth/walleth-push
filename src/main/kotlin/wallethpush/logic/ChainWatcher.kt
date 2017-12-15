@@ -1,6 +1,5 @@
 package wallethpush.logic
 
-import kontinuum.ConfigProvider
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.kethereum.functions.getTokenTransferTo
@@ -8,6 +7,7 @@ import org.kethereum.functions.isTokenTransfer
 import org.kethereum.rpc.EthereumRPC
 import org.kethereum.rpc.JSONMediaType
 import org.kethereum.rpc.toKethereumTransaction
+import wallethpush.model.ConfigProvider
 import wallethpush.model.PushMessage
 import wallethpush.model.PushMessageData
 import wallethpush.okhttp

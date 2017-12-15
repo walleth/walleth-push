@@ -1,9 +1,8 @@
-package kontinuum
+package wallethpush.model
 
 import okio.Okio
 import wallethpush.configAdapter
 import wallethpush.configFile
-import wallethpush.model.Config
 
 object ConfigProvider {
 
