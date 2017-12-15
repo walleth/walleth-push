@@ -14,6 +14,7 @@ import wallethpush.okhttp
 import wallethpush.pushMappingStore
 import wallethpush.pushMessageAdapter
 import java.math.BigInteger
+import java.math.BigInteger.ONE
 
 class StatefulChain(val name: String, val ethereumRPC: EthereumRPC, var lastBlock: String)
 
@@ -34,9 +35,13 @@ fun watchChain() {
                 val newBlock = statefulChain.ethereumRPC.getBlockNumberString()
 
                 if (newBlock != null && newBlock != statefulChain.lastBlock) {
-                    println("New Block " + BigInteger(newBlock.replace("0x",""), 16) + " on " + statefulChain.name)
-                    processBlockNumber(newBlock, statefulChain.ethereumRPC)
-                    statefulChain.lastBlock = newBlock
+                    println("New Block " + BigInteger(newBlock.replace("0x", ""), 16) + " on " + statefulChain.name)
+                    processBlockNumber(statefulChain.lastBlock, statefulChain.ethereumRPC)
+                    if (statefulChain.lastBlock == "0x0") {
+                        statefulChain.lastBlock = newBlock
+                    } else {
+                        statefulChain.lastBlock = "0x" + BigInteger(newBlock.removePrefix("0x"), 16).plus(ONE).toString(16)
+                    }
                 }
             } catch (e: Exception) {
                 println("problem at block ${statefulChain.lastBlock} " + e.message)
