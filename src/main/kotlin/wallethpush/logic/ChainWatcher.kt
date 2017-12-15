@@ -40,6 +40,7 @@ fun watchChain() {
                 }
             } catch (e: Exception) {
                 println("problem at block ${statefulChain.lastBlock} " + e.message)
+                e.printStackTrace()
             }
         }
 
