@@ -39,7 +39,7 @@ fun watchChain() {
                     statefulChain.lastBlock = newBlock
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                println("problem at block ${statefulChain.lastBlock} " + e.message)
             }
         }
 
