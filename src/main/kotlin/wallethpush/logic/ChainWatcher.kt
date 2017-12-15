@@ -18,6 +18,8 @@ import java.math.BigInteger.ONE
 
 class StatefulChain(val name: String, val ethereumRPC: EthereumRPC, var lastBlock: String)
 
+private fun StatefulChain.lastBlockBigInteger() = BigInteger(lastBlock.removePrefix("0x"), 16)
+
 
 fun watchChain() {
 
@@ -40,11 +42,11 @@ fun watchChain() {
                     if (statefulChain.lastBlock == "0x0") {
                         statefulChain.lastBlock = newBlock
                     } else {
-                        statefulChain.lastBlock = "0x" + BigInteger(newBlock.removePrefix("0x"), 16).plus(ONE).toString(16)
+                        statefulChain.lastBlock = "0x" + statefulChain.lastBlockBigInteger().plus(ONE).toString(16)
                     }
                 }
             } catch (e: Exception) {
-                println("problem at block ${statefulChain.lastBlock} " + e.message)
+                println("problem on chain ${statefulChain.name} at block ${statefulChain.lastBlockBigInteger()}} " + e.message)
             }
         }
 
@@ -52,6 +54,7 @@ fun watchChain() {
     }
 
 }
+
 
 fun processBlockNumber(newBlock: String, ethereumRPC: EthereumRPC) {
     ethereumRPC.getBlockByNumber(newBlock)?.transactions?.forEach {
