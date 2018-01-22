@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        KOTLIN_VERSION = "1.2.10"
+        KOTLIN_VERSION = "1.2.20"
     }
 
     repositories {
